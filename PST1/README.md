@@ -49,13 +49,3 @@ The code is broken down into four simple parts:
 
 ---
 
-## How to Run the Program
-
-You need Python installed on your computer to run this.
-
-1. Open your terminal (or command prompt).
-2. Go to the folder where you saved `MSMS.py`.
-3. Type the following command and press Enter:
-
-```bash
-python MSMS.py
