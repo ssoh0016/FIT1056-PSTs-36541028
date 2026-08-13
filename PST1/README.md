@@ -48,4 +48,7 @@ The code is broken down into four simple parts:
 * The `main()` function shows a numbered menu on the screen. The user types a number from 1 to 5 to pick what they want to do.
 
 ---
+### 5. Notes Highlights
+* **`def main()`**: encapsulates program execution logic, prevent variable scope leakage and organizing the entry points
+* **`if__name__=="__main__"`**: ensures the script runs its main program only when executed directly, allowing it to be imported safety
 
