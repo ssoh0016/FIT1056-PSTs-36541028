@@ -10,11 +10,11 @@ This is a simple Python program. It helps a music school receptionist manage stu
 ---
 
 ## Table of Contents
-- [Overview](#overview)
-- [How the Code Works](#how-the-code-works)
-- [How to Run the Program](#how-to-run-the-program)
-- [How to Test the Program](#how-to-test-the-program)
-- [Design Choices & Assumptions](#design-choices--assumptions)
+- [Overview]
+- [How the Code Works]
+- [How to Run the Program]
+- [How to Test the Program]
+- [Design Choices & Assumptions]
 
 ---
 
