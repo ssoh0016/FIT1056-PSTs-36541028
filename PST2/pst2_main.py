@@ -75,15 +75,6 @@ def remove_teacher(teacher_id):
             return 
     print(f"Error: Student with ID {teacher_id} not found.")
     
-def add_student(name, enrolled_in=None):
-    """Adds a student dictionary to the data store."""
-    if enrolled_in is None:
-        enrolled_in = []
-    student_id = app_data['next_student_id']
-    new_student = {"id": student_id, "name": name, "enrolled_in": enrolled_in}
-    app_data['students'].append(new_student)
-    app_data['next_student_id'] += 1
-    print(f"Core: Student '{name}' added.")
     
 def update_student(student_id, **fields):
     """Finds a student by ID and updates their data with provided fields."""
@@ -155,3 +146,78 @@ def print_student_card(student_id):
         print(f"Printed student card to {filename}.")
     else:
         print(f"Error: Could not print card, student {student_id} not found.")
+        
+# --- Main Application Loop ---
+def main():
+    """Main function to run the MSMS application."""
+    load_data() # Load all data from file at startup.
+
+    while True:
+        print("\n===== MSMS v2 (Persistent) =====")
+        print("1. Check-in Student")
+        print("2. Print Student Card")
+        print("3. Update Teacher Info")
+        print("4. Remove Student")
+        print("q. Quit and Save")
+        
+        choice = input("Enter your choice: ")
+        
+        made_change = False # A flag to track if we need to save
+        if choice == '1':
+            # TODO: Get student_id and course_id from user, then call check_in().
+            try:
+                s_id = int(input("Enter Student ID: "))
+                c_id = input("Enter Course ID: ")
+                check_in(s_id, c_id)
+                made_change = True
+            except ValueError:
+                print("Invalid input. Student ID must be an integer.")
+        elif choice == '2':
+            # TODO: Get student_id, then call print_student_card().
+            try:
+                s_id = int(input("Enter Student ID: "))
+                print_student_card(s_id)
+            except ValueError:
+                print("Invalid input. Student ID must be an integer.")
+        elif choice == '3':
+            # TODO: Get teacher_id and new details, then call update_teacher().
+            # Example: update_teacher(1, speciality="Advanced Piano")
+            try:
+                t_id = int(input("Enter Teacher ID to update: "))
+                new_spec = input("Enter new speciality (leave blank to skip): ").strip()
+                new_name = input("Enter new name (leave blank to skip): ").strip()
+                updates = {}
+                if new_spec: updates['speciality'] = new_spec
+                if new_name: updates['name'] = new_name
+                
+                if updates:
+                    if update_teacher(t_id, **updates):
+                        made_change = True
+                else:
+                    print("No updates provided.")
+            except ValueError:
+                print("Invalid input. Teacher ID must be an integer.")
+                
+        elif choice == '4':
+            # TODO: Get student_id, then call remove_student().
+            try:
+                s_id = int(input("Enter Student ID to remove: "))
+                if remove_student(s_id):
+                    made_change = True
+            except ValueError:
+                print("Invalid input. Student ID must be an integer.")
+                
+        elif choice.lower() == 'q':
+            print("Saving final changes and exiting.")
+            break
+        else:
+            print("Invalid choice.")
+            
+        if made_change:
+            save_data() # Save the data immediately after any change.
+
+    save_data() # One final save on exit.
+
+# --- Program Start ---
+if __name__ == "__main__":
+    main()
