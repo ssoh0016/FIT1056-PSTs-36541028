@@ -1,4 +1,5 @@
 import json
+import datetime
 from app.student import StudentUser
 from app.teacher import TeacherUser, Course
 
@@ -9,9 +10,7 @@ class ScheduleManager:
         self.students = []
         self.teachers = []
         self.courses = []
-        # TODO: Initialize the new attendance_log attribute as an empty list.
         self.attendance_log = []
-        # ... (next_id counters) ...
         self._load_data()
 
     def _load_data(self):
@@ -19,7 +18,7 @@ class ScheduleManager:
         try:
             with open(self.data_path, 'r') as f:
                 data = json.load(f)
-                # TODO: Load students, teachers, and courses as before.
+                
                 for s in data.get("students", []):
                     self.students.append(StudentUser(s["id"], s["name"], s.get("enrolled_in", [])))
                     
@@ -29,29 +28,65 @@ class ScheduleManager:
                 for c in data.get("courses", []):
                     self.courses.append(Course(c["course_id"], c["course_name"], c["teacher_id"]))
                     
-                # TODO: Correctly load the attendance log.
-                # Use .get() with a default empty list to prevent errors if the key doesn't exist.
                 self.attendance_log = data.get("attendance", [])
         except FileNotFoundError:
             print("Data file not found. Starting with a clean state.")
     
+    def switch_student_course(self, student_id, from_course_id, to_course_id):
+        """Finds the student, removes the old course, and appends the new one."""
+        for student in self.students:
+            if student.id == student_id:
+                if from_course_id in student.enrolled_in:
+                    student.enrolled_in.remove(from_course_id)
+                    student.enrolled_in.append(to_course_id)
+                    return True
+        return False    
+    
+    def check_in(self, student_id, course_id):
+        """Records a student's attendance for a course after validation."""
+        student = self.find_student_by_id(student_id)
+        course = self.find_course_by_id(course_id)
+        
+        if not student or not course:
+            print("Error: Check-in failed. Invalid Student or Course ID.")
+            return False
+            
+        timestamp = datetime.datetime.now().isoformat()
+        check_in_record = {"student_id": student_id, "course_id": course_id, "timestamp": timestamp}
+        
+        self.attendance_log.append(check_in_record)
+        self._save_data() 
+        print(f"Success: Student {student.name} checked into {course.course_name}.")
+        return True
+
+    def find_student_by_id(self, student_id):
+        """Helper to find a student object by their ID."""
+        for student in self.students:
+            if student.id == student_id:
+                return student
+        return None
+
+    def find_course_by_id(self, course_id):
+        """Helper to find a course object by its ID."""
+        for course in self.courses:
+            if course.course_id == course_id:
+                return course
+        return None
+        
+    def get_daily_roster(self, day):
+        """Retrieves lessons for a specific day."""
+        return self.courses
+
     def _save_data(self):
         """Converts object lists back to dictionaries and saves to JSON."""
-        # TODO: Create a 'data_to_save' dictionary.
         data_to_save = {
             "students": [s.__dict__ for s in self.students],
             "teachers": [t.__dict__ for t in self.teachers],
             "courses": [c.__dict__ for c in self.courses],
-            # TODO: Add the attendance_log to the dictionary to be saved.
-            # Since it's already a list of dicts, no conversion is needed.
             "attendance": self.attendance_log,
-            # 'getattr' for ID counters just to ensure my program doesn't crash
-            # if user haven't explicity set up self.nest_student_id in my __init__ method
-            "next_student_id":getattr(self, 'nest_student_id', 1),
-            "next_teacher_id":getattr(self, 'nest_teacher_id', 1)
-            
+            "next_student_id": getattr(self, 'next_student_id', 1),
+            "next_teacher_id": getattr(self, 'next_teacher_id', 1)
         }
-        # TODO: Write 'data_to_save' to the JSON file.
         with open(self.data_path, 'w') as f:
             json.dump(data_to_save, f, indent=4)
         print("Data successfully saved.")
