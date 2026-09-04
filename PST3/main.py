@@ -16,14 +16,21 @@ def front_desk_daily_roster(manager, day):
         for lesson in lessons:
             print(f"Course: {lesson.course_name} (ID: {lesson.course_id}) | Teacher ID: {lesson.teacher_id}")
 
-def switch_course(manager, student_id, from_course_id, to_course_id):
+def switch_course(manager):
     # TODO: Implement the logic to switch a student by calling methods on the manager.
-    success = manager.switch_student_course(student_id, from_course_id, to_course_id)
-    
-    if success:
-        print(f"Success: Student {student_id} switched from {from_course_id} to {to_course_id}.")
-    else:
-        print(f"Error: Could not switch process. Please verify the IDs and ensure the student is enrolled in the original course.")
+    print("\n--- Switch Course ---")
+    try:
+        s_id = int(input("Enter Student ID: "))
+        from_c = input("Enter current Course ID to drop: ")
+        to_c = input("Enter new Course ID to add: ")
+        
+        # Pass the data to the manager to do the actual work
+        if manager.switch_student_course(s_id, from_c, to_c):
+            print(f"Success: Student {s_id} switched from {from_c} to {to_c}.")
+        else:
+            print("Error: Could not switch course. Please check the IDs.")
+    except ValueError:
+        print("Invalid input. Student ID must be a number.")
 
 def main():
     """Main function to run the MSMS application."""
@@ -47,7 +54,7 @@ def main():
         elif choice == '2':
             try:
                 s_id = int(input("Enter Student ID: "))
-                c_id = input("Enter Course ID: ")
+                c_id = int(input("Enter Course ID: "))
                 # Manage handles the actual check-in logic
                 manager.check_in(s_id, c_id)
             except ValueError:
