@@ -11,8 +11,8 @@ PST3 transitions the application from procedural code to a full **Object-Oriente
 FIT1056-PSTs-36541028/
 └── PST3/
     ├── app/
-    │   ├── __init__.py      # Package initialization
-    │   ├── user.py          # Base User model
+    │   ├── __init__.py      
+    │   ├── user.py          # Base User class
     │   ├── student.py       # StudentUser class inheriting from User
     │   ├── teacher.py       # TeacherUser and Course classes
     │   └── schedule.py      # ScheduleManager class (Controller/Brain)
