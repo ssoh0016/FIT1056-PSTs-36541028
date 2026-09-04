@@ -20,8 +20,15 @@ class ScheduleManager:
             with open(self.data_path, 'r') as f:
                 data = json.load(f)
                 # TODO: Load students, teachers, and courses as before.
-                # ...
-
+                for s in data.get("students", []):
+                    self.students.append(StudentUser(s["id"], s["name"], s.get("enrolled_in", [])))
+                    
+                for t in data.get("teachers", []):
+                    self.teachers.append(TeacherUser(t["id"], t["name"], t["speciality"]))
+                    
+                for c in data.get("courses", []):
+                    self.courses.append(Course(c["course_id"], c["course_name"], c["teacher_id"]))
+                    
                 # TODO: Correctly load the attendance log.
                 # Use .get() with a default empty list to prevent errors if the key doesn't exist.
                 self.attendance_log = data.get("attendance", [])
@@ -38,8 +45,13 @@ class ScheduleManager:
             # TODO: Add the attendance_log to the dictionary to be saved.
             # Since it's already a list of dicts, no conversion is needed.
             "attendance": self.attendance_log,
-            # ... (next_id counters) ...
+            # 'getattr' for ID counters just to ensure my program doesn't crash
+            # if user haven't explicity set up self.nest_student_id in my __init__ method
+            "next_student_id":getattr(self, 'nest_student_id', 1),
+            "next_teacher_id":getattr(self, 'nest_teacher_id', 1)
+            
         }
         # TODO: Write 'data_to_save' to the JSON file.
         with open(self.data_path, 'w') as f:
             json.dump(data_to_save, f, indent=4)
+        print("Data successfully saved.")
