@@ -20,22 +20,22 @@ FIT1056-PSTs-36541028/
     │   └── msms.json        # JSON database file for persistence
     └── main.py              # Main application entry point (View/Front Desk)
 
-## 2. Component & Fragment Breakdown
+## Fragment 3.1: Implementing Core Business Logic**
 * **Fragment 3.1:  The New Blueprints (The Model Layer) `app/`**
   * `app/user.py`:Contains the foundational User base class providing shared attributes (user_id and name).
   * `app/student.py`: Defines `StudentUser` (inherits from User), managing student-specific attributes such as enrolled courses and student status.
   * `app/teacher.py`: Defines `TeacherUser` (inherits from User), managing instructor profiles and assigned courses. `Course` represents individual courses offered by the music school, tracking course IDs, instruments, course name, teacher ID, enrolled student id and lessons.
   * `data/msms.json` Holds the persisted JSON database containing user records, course details, and attendance logs.
 
-* **Fragment 3.2: The "Brain" of the System (The Controller Layer) `app/schedule.py`**
+## Fragment 3.2: The "Brain" of the System (The Controller Layer) `app/schedule.py`**
   * `__init__: Explicitly initializes self.attendance_log = [].
   * `_load_data()` Reads raw dictionaries from `data/msms.json` and instantiates them into `StudentUser`, `TeacherUser`, and `Course` class objects. Reads the "attendance" key using `.get()` to safely handle legacy data.
   * `_save_data()` Converts active class instances back into JSON-serializable dictionaries and writes `self.attendance_log` back to `data/msms.json`.
 
-* **Fragment 3.3: Implementing Core Business Logic**
+## Fragment 3.3: Implementing Core Business Logic**
   * `check_in()` Implements validation logic for student check-ins. Updates runtime state and safely appends records to `self.attendance_log` without executing UI/console print commands.
   
-* **Fragment 3.4:  The New Front Desk & Main Entry Point (The View Layer)**
+## Fragment 3.4:  The New Front Desk & Main Entry Point (The View Layer)**
   * `main.py` Serves as the user interaction entry point.
   * Instantiates a single `ScheduleManager` object at startup.
   * View functions (e.g., `front_desk_daily_roster(manager, day)`) accept the `manager` instance as a parameter, query its state, and handle all console output formatting.
