@@ -20,13 +20,20 @@ class ScheduleManager:
                 data = json.load(f)
                 
                 for s in data.get("students", []):
-                    self.students.append(StudentUser(s["id"], s["name"], s.get("enrolled_in", [])))
+                    self.students.append(StudentUser(s["id"], s["name"], s.get("enrolled_course_ids", [])))
                     
                 for t in data.get("teachers", []):
                     self.teachers.append(TeacherUser(t["id"], t["name"], t["speciality"]))
                     
                 for c in data.get("courses", []):
-                    self.courses.append(Course(c["course_id"], c["course_name"], c["teacher_id"]))
+                    self.courses.append(Course(
+                        c.get("course_id", c.get("id")), 
+                        c.get("course_name", c.get("name")), 
+                        c["teacher_id"],
+                        c.get("instrument", ""),
+                        c.get("enrolled_student_ids"),
+                        c.get("lessons", [])
+                        ))
                     
                 self.attendance_log = data.get("attendance", [])
         except FileNotFoundError:
@@ -36,9 +43,13 @@ class ScheduleManager:
         """Finds the student, removes the old course, and appends the new one."""
         for student in self.students:
             if student.id == student_id:
-                if from_course_id in student.enrolled_in:
-                    student.enrolled_in.remove(from_course_id)
-                    student.enrolled_in.append(to_course_id)
+                # convert string input from main.py to integers to match JSON IDs
+                from_id_int = int(from_course_id)
+                to_id_int = int(to_course_id)
+                
+                if from_id_int in student.enrolled_course_ids:
+                    student.enrolled_course_ids.remove(from_id_int)
+                    student.enrolled_course_ids.append(to_id_int)
                     return True
         return False    
     
@@ -74,8 +85,14 @@ class ScheduleManager:
         return None
         
     def get_daily_roster(self, day):
-        """Retrieves lessons for a specific day."""
-        return self.courses
+        """Retrieves the courses that have a lesson scheduled on the given day."""
+        roster = []
+        for course in self.courses:
+            for lesson in course.lessons:
+                if lesson.get("day", "").strip().lower() == day.strip().lower():
+                    roster.append(course)
+                    break  # course already added; don't add it twice for a 2nd same-day lesson
+        return roster
 
     def _save_data(self):
         """Converts object lists back to dictionaries and saves to JSON."""
