@@ -6,6 +6,10 @@ This repository contains the implementation of the **Music School Management Sys
 PST3 transitions the application from procedural code to a full **Object-Oriented Programming (OOP)** architecture following the **Model-Controller-View (MCV)** pattern.
 
 ---
+## 2. Directory & File Structure
+ * FIT 1056-PSTs-36541028/PST3/app contains `__init__.py`, `user.py`, `student.py`, `teacher.py` and `schedule.py`
+ * FIT 1056-PSTs-36541028/PST3/data contains `msms.json`
+ * FIT 1056-PSTs-36541028/PST3 contains `main.py`
 
 ## Fragment 3.1: Implementing Core Business Logic
 * **Fragment 3.1:  The New Blueprints (The Model Layer) `app/`**
