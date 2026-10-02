@@ -31,10 +31,16 @@ def show_roster_page(manager):
     st.subheader("Student Check-in")
     with st.form("check_in_form"):
         try:
-            # Dynamically populate dropdowns from manager lists
-            student_list = {s.name: s.id for s in manager.students}
+            # Dynamically populate dropdowns from manager lists.
+            # Labels include the ID so two students/courses that share a name
+            # don't collide into the same dict key (and become unreachable).
+            student_list = {f"{s.name} (ID: {s.id})": s.id for s in manager.students}
             # Using getattr to safely handle whether your PST3 uses 'name' or 'course_name'
-            course_list = {getattr(c, 'course_name', getattr(c, 'name', 'Unknown')): getattr(c, 'course_id', getattr(c, 'id', 0)) for c in manager.courses}
+            course_list = {
+                f"{getattr(c, 'course_name', getattr(c, 'name', 'Unknown'))} (ID: {getattr(c, 'course_id', getattr(c, 'id', 0))})":
+                getattr(c, 'course_id', getattr(c, 'id', 0))
+                for c in manager.courses
+            }
             
             selected_student_name = st.selectbox("Select Student", list(student_list.keys()))
             selected_course_name = st.selectbox("Select Course", list(course_list.keys()))
